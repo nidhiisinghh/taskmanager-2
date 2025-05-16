@@ -29,7 +29,7 @@ const CreateTaskModal = ({ isOpen, onClose, projectId, initialStatus }: CreateTa
         title: formData.title,
         description: formData.description,
         projectId,
-        statusId: initialStatus,
+        status: initialStatus,  // Changed from statusId to status
         dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined,
         priority: formData.priority
       });

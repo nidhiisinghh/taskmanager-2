@@ -15,6 +15,7 @@ import { Task } from '../../store/taskStore';
 import KanbanColumn from './KanbanColumn';
 import KanbanTask from './KanbanTask';
 import useTaskStore from '../../store/taskStore';
+import { Trash2 } from 'lucide-react';
 
 const statuses = [
   { id: 'todo', name: 'To Do', color: '#3B82F6', order: 0 },
@@ -30,8 +31,8 @@ interface KanbanBoardProps {
 
 const KanbanBoard = ({ tasks, projectId }: KanbanBoardProps) => {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [updateError, setUpdateError] = useState<string | null>(null); // Add this line
-  const { updateTask, fetchProjectTasks } = useTaskStore();
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const { updateTask, fetchProjectTasks, deleteTask } = useTaskStore();
   
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -46,13 +47,13 @@ const KanbanBoard = ({ tasks, projectId }: KanbanBoardProps) => {
   };
   
   const getTasksByStatus = (statusId: string) => {
-    return tasks.filter(task => task.statusId === statusId);
+    return tasks.filter(task => task.status === statusId);  // Changed from statusId to status
   };
   
   const handleStatusUpdate = async (taskId: string, newStatusId: string) => {
     try {
       setUpdateError(null);
-      await updateTask(taskId, { statusId: newStatusId });
+      await updateTask(taskId, { status: newStatusId });
     } catch (error) {
       setUpdateError('Failed to update task status');
       console.error('Error updating task status:', error);
@@ -63,7 +64,7 @@ const KanbanBoard = ({ tasks, projectId }: KanbanBoardProps) => {
     const { active, over } = event;
     if (!over) return;
     
-    const activeTask = tasks.find(t => t.id === active.id); // Change _id to id
+    const activeTask = tasks.find(t => t._id === active.id); // Change _id to id
     if (!activeTask) return;
     
     const overId = over.id as string;
@@ -71,7 +72,7 @@ const KanbanBoard = ({ tasks, projectId }: KanbanBoardProps) => {
     
     if (status !== activeTask.status) {
       try {
-        await updateTask(activeTask.id, { status }); // Change _id to id
+        await updateTask(activeTask._id, { status }); // Change _id to id
         await fetchProjectTasks(projectId);
       } catch (error) {
         console.error('Error updating task status:', error);
@@ -83,15 +84,26 @@ const KanbanBoard = ({ tasks, projectId }: KanbanBoardProps) => {
     const { active, over } = event;
     if (!over) return;
     
-    const activeTask = tasks.find(t => t.id === active.id);
+    const activeTask = tasks.find(t => t._id === active.id);
     if (!activeTask) return;
     
     const overId = over.id as string;
-    if (overId !== activeTask.statusId) {
-      await handleStatusUpdate(activeTask.id, overId);
+    if (overId !== activeTask.status) {
+      await handleStatusUpdate(activeTask._id, overId);
     }
     
     setActiveId(null);
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (window.confirm('Are you sure you want to delete this task?')) {
+      try {
+        await deleteTask(taskId);
+        await fetchProjectTasks(projectId);
+      } catch (error) {
+        console.error('Error deleting task:', error);
+      }
+    }
   };
 
   return (
@@ -102,7 +114,7 @@ const KanbanBoard = ({ tasks, projectId }: KanbanBoardProps) => {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-6 overflow-x-auto pb-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 min-h-[calc(100vh-200px)] p-4">
         <SortableContext items={statuses.map(s => s.id)} strategy={rectSortingStrategy}>
           {statuses.map(status => (
             <KanbanColumn
@@ -110,6 +122,7 @@ const KanbanBoard = ({ tasks, projectId }: KanbanBoardProps) => {
               status={status}
               tasks={getTasksByStatus(status.id)}
               projectId={projectId}
+              onDeleteTask={handleDeleteTask}
             />
           ))}
         </SortableContext>
@@ -117,7 +130,10 @@ const KanbanBoard = ({ tasks, projectId }: KanbanBoardProps) => {
       
       <DragOverlay>
         {activeId ? (
-          <KanbanTask task={tasks.find(t => t.id === activeId)!} />
+          <KanbanTask 
+            task={tasks.find(t => t._id === activeId)!} 
+            onDelete={() => handleDeleteTask(activeId)}
+          />
         ) : null}
       </DragOverlay>
     </DndContext>

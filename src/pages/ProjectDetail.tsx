@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import KanbanBoard from '../components/project/KanbanBoard';
 import useProjectStore from '../store/projectStore';

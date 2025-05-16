@@ -10,9 +10,10 @@ interface KanbanColumnProps {
   status: Status;
   tasks: Task[];
   projectId: string;
+  onDeleteTask: (taskId: string) => void;
 }
 
-const KanbanColumn = ({ status, tasks, projectId }: KanbanColumnProps) => {
+const KanbanColumn = ({ status, tasks, projectId, onDeleteTask }: KanbanColumnProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const {
     attributes,
@@ -39,7 +40,7 @@ const KanbanColumn = ({ status, tasks, projectId }: KanbanColumnProps) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-gray-100 p-4 rounded-lg min-h-[200px] w-80"
+      className="bg-gray-100 p-4 rounded-lg h-full flex flex-col"
     >
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-medium text-gray-800">{status.name}</h3>
@@ -51,9 +52,13 @@ const KanbanColumn = ({ status, tasks, projectId }: KanbanColumnProps) => {
         </button>
       </div>
 
-      <div className="space-y-3">
+      <div className="flex-1 space-y-3 overflow-y-auto">
         {tasks.map((task) => (
-          <KanbanTask key={task.id} task={task} />
+          <KanbanTask 
+            key={task.id} 
+            task={task} 
+            onDelete={() => onDeleteTask(task.id)}
+          />
         ))}
       </div>
 

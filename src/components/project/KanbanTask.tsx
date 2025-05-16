@@ -52,7 +52,7 @@ const KanbanTask = ({ task }: KanbanTaskProps) => {
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-white rounded-lg shadow-sm p-3 border border-gray-100 cursor-grab active:cursor-grabbing"
+      className="bg-white rounded-lg shadow-sm p-3 border border-gray-100 cursor-grab active:cursor-grabbing relative"
       {...attributes}
       {...listeners}
     >
@@ -62,27 +62,52 @@ const KanbanTask = ({ task }: KanbanTaskProps) => {
           <button 
             onClick={(e) => {
               e.stopPropagation();
+              e.preventDefault();
               setIsMenuOpen(!isMenuOpen);
             }}
-            className="p-1 rounded hover:bg-gray-100 text-gray-500"
+            className="p-1 rounded hover:bg-gray-100 text-gray-500 focus:outline-none"
           >
             <MoreHorizontal className="h-4 w-4" />
           </button>
           
           {isMenuOpen && (
-            <div className="absolute right-0 mt-1 w-36 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
-              <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                Edit
-              </button>
-              <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                Copy link
-              </button>
-              <button 
-                onClick={handleDelete}
-                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+            <div 
+              className="fixed inset-0 z-10"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <div 
+                className="absolute right-0 top-full mt-1 w-36 bg-white rounded-md shadow-lg py-1 z-20 border border-gray-200"
+                onClick={(e) => e.stopPropagation()}
               >
-                Delete
-              </button>
+                <button 
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                  onClick={() => {
+                    // Add edit functionality
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Edit
+                </button>
+                <button 
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href + `?task=${task.id}`);
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Copy link
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete();
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 focus:outline-none"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           )}
         </div>

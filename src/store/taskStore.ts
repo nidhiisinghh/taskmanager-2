@@ -7,7 +7,7 @@ interface Comment {
   createdAt: string;
 }
 
-interface Task {
+export interface Task {
   _id: string;
   title: string;
   description?: string;
@@ -124,7 +124,8 @@ const useTaskStore = create<TaskStore>((set, get) => ({
   addComment: async (id, text) => {
     try {
       set({ isLoading: true, error: null });
-      const updatedTask = await taskApi.addComment(id, text);
+      await taskApi.addComment(id, text);
+      const updatedTask = await taskApi.getOne(id);
       set((state) => ({
         tasks: state.tasks.map((t) =>
           t._id === id ? updatedTask : t
