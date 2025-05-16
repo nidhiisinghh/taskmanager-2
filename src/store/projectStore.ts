@@ -7,7 +7,7 @@ interface Project {
   description?: string;
   owner: string;
   members: string[];
-  status: 'active' | 'archived' | 'completed';
+  status: 'active' | 'completed' | 'due-soon';
   createdAt: string;
   updatedAt: string;
 }
@@ -38,8 +38,10 @@ const useProjectStore = create<ProjectStore>((set, get) => ({
       set({ isLoading: true, error: null });
       const projects = await projectApi.getAll();
       set({ projects, isLoading: false });
+      return projects; // Return the fetched projects
     } catch (error) {
       set({ error: (error as Error).message, isLoading: false });
+      return [];
     }
   },
 

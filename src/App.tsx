@@ -17,13 +17,12 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        // Create a user object based on Firebase user
         const user = {
           id: firebaseUser.uid,
           name: firebaseUser.displayName || 'User',
           email: firebaseUser.email || '',
           photoURL: firebaseUser.photoURL || undefined,
-          badges: [], // Default empty badges
+          badges: [],
         };
         setUser(user);
       } else {
@@ -44,7 +43,12 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route 

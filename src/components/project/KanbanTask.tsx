@@ -7,6 +7,7 @@ import {
   MoreHorizontal, User 
 } from 'lucide-react';
 import { format } from 'date-fns';
+import useTaskStore from '../../store/taskStore';
 
 interface KanbanTaskProps {
   task: Task;
@@ -14,6 +15,7 @@ interface KanbanTaskProps {
 
 const KanbanTask = ({ task }: KanbanTaskProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { deleteTask } = useTaskStore();
   
   const {
     attributes,
@@ -23,7 +25,7 @@ const KanbanTask = ({ task }: KanbanTaskProps) => {
     transition,
     isDragging,
   } = useSortable({
-    id: task.id,
+    id: task.id,  // Fixed: changed _id to id
     data: {
       type: 'task',
       task,
@@ -34,6 +36,16 @@ const KanbanTask = ({ task }: KanbanTaskProps) => {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+  };
+  
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this task?')) {
+      try {
+        await deleteTask(task.id);  // Fixed: changed _id to id
+      } catch (error) {
+        console.error('Error deleting task:', error);
+      }
+    }
   };
   
   return (
@@ -65,7 +77,10 @@ const KanbanTask = ({ task }: KanbanTaskProps) => {
               <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                 Copy link
               </button>
-              <button className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+              <button 
+                onClick={handleDelete}
+                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+              >
                 Delete
               </button>
             </div>
@@ -88,7 +103,7 @@ const KanbanTask = ({ task }: KanbanTaskProps) => {
             </div>
           )}
           
-          {task.comments.length > 0 && (
+          {task.comments?.length > 0 && (
             <div className="flex items-center gap-1">
               <MessageSquare className="h-3 w-3" />
               <span>{task.comments.length}</span>
@@ -96,7 +111,7 @@ const KanbanTask = ({ task }: KanbanTaskProps) => {
           )}
         </div>
         
-        {task.assigneeId && (
+        {task.assigneeId && (  // Fixed: changed assignee to assigneeId
           <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
             <User className="h-3 w-3 text-gray-600" />
           </div>

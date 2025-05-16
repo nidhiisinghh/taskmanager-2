@@ -1,6 +1,6 @@
 import { auth } from '../firebase/config';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://task-manager-bpzf.onrender.com/api';
 
 // Helper function to get auth token
 const getAuthToken = async () => {
@@ -72,8 +72,8 @@ export const taskApi = {
     title: string;
     description?: string;
     projectId: string;
-    assignee?: string;
-    priority?: 'low' | 'medium' | 'high';
+    statusId: string;
+    priority?: string;
     dueDate?: Date;
   }) =>
     apiRequest('/tasks', {
@@ -84,19 +84,9 @@ export const taskApi = {
   getProjectTasks: (projectId: string) =>
     apiRequest(`/tasks/project/${projectId}`),
 
-  getOne: (id: string) =>
-    apiRequest(`/tasks/${id}`),
-
-  update: (id: string, data: {
-    title?: string;
-    description?: string;
-    assignee?: string;
-    status?: 'todo' | 'in-progress' | 'review' | 'completed';
-    priority?: 'low' | 'medium' | 'high';
-    dueDate?: Date;
-  }) =>
+  update: (id: string, data: any) =>
     apiRequest(`/tasks/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       body: JSON.stringify(data),
     }),
 
@@ -104,10 +94,4 @@ export const taskApi = {
     apiRequest(`/tasks/${id}`, {
       method: 'DELETE',
     }),
-
-  addComment: (id: string, text: string) =>
-    apiRequest(`/tasks/${id}/comments`, {
-      method: 'POST',
-      body: JSON.stringify({ text }),
-    }),
-}; 
+};

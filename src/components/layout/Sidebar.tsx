@@ -29,6 +29,7 @@ const Sidebar = () => {
       <nav className="flex-1 overflow-y-auto px-3 py-2">
         <div className="space-y-1">
           <Link 
+            key="dashboard"
             to="/" 
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${
               isActivePath('/') 
@@ -41,6 +42,7 @@ const Sidebar = () => {
           </Link>
           
           <Link 
+            key="notifications"
             to="/notifications" 
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${
               isActivePath('/notifications') 
@@ -53,6 +55,7 @@ const Sidebar = () => {
           </Link>
           
           <Link 
+            key="team"
             to="/team" 
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${
               isActivePath('/team') 
@@ -72,16 +75,16 @@ const Sidebar = () => {
           <div className="mt-2 space-y-1">
             {displayedProjects.map((project) => (
               <Link 
-                key={project.id}
-                to={`/projects/${project.id}`}
+                key={project._id}
+                to={`/projects/${project._id}`}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${
-                  isActivePath(`/projects/${project.id}`) 
+                  isActivePath(`/projects/${project._id}`) 
                     ? 'bg-blue-50 text-blue-700' 
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
                 <Folder className="h-5 w-5 flex-shrink-0" />
-                <span className="truncate">{project.title}</span>
+                <span className="truncate">{project.name}</span>
               </Link>
             ))}
             
@@ -99,6 +102,7 @@ const Sidebar = () => {
       
       <div className="p-4 border-t border-gray-200">
         <Link 
+          key="settings"
           to="/settings"
           className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
