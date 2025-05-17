@@ -4,7 +4,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase/config';
 import useAuthStore from './store/authStore';
 
-// Pages
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ProjectDetail from './pages/ProjectDetail';
