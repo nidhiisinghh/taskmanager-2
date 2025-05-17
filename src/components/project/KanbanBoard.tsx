@@ -47,7 +47,9 @@ const KanbanBoard = ({ tasks, projectId }: KanbanBoardProps) => {
   };
   
   const getTasksByStatus = (statusId: string) => {
-    return tasks.filter(task => task.status === statusId);  // Changed from statusId to status
+    return tasks
+      .filter(task => task.status === statusId)
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   };
   
   const handleStatusUpdate = async (taskId: string, newStatusId: string) => {

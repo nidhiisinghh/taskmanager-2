@@ -72,6 +72,20 @@ const useProjectStore = create<ProjectStore>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
       const updatedProject = await projectApi.update(id, data);
+      
+      // If project is being marked as completed, update all its tasks
+      if (data.status === 'completed') {
+        const taskStore = useTaskStore.getState();
+        const projectTasks = taskStore.tasks.filter(task => task.project === id);
+        
+        // Update all tasks to completed status
+        await Promise.all(
+          projectTasks.map(task => 
+            taskStore.updateTask(task._id, { status: 'completed' })
+          )
+        );
+      }
+
       set((state) => ({
         projects: state.projects.map((p) =>
           p._id === id ? updatedProject : p

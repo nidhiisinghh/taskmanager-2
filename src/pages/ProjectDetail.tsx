@@ -42,7 +42,8 @@ const ProjectDetail = () => {
     if (!projectId) return;
     try {
       await updateProject(projectId, { status: newStatus });
-      // Project will be automatically updated in the store and reflect on the dashboard
+      // Refresh tasks to reflect the new status
+      await fetchProjectTasks(projectId);
     } catch (error) {
       setError('Failed to update project status. Please try again.');
       console.error('Error updating project status:', error);

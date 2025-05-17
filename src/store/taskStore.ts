@@ -36,6 +36,7 @@ export interface TaskStore {
     assignee?: string;
     priority?: 'low' | 'medium' | 'high';
     dueDate?: Date;
+    status: 'todo' | 'in-progress' | 'review' | 'completed';
   }) => Promise<void>;
   updateTask: (id: string, data: {
     title?: string;

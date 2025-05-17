@@ -6,7 +6,7 @@ interface CreateTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   projectId: string;
-  initialStatus: string;
+  initialStatus: 'todo' | 'in-progress' | 'review' | 'completed';
 }
 
 const CreateTaskModal = ({ isOpen, onClose, projectId, initialStatus }: CreateTaskModalProps) => {
@@ -29,7 +29,7 @@ const CreateTaskModal = ({ isOpen, onClose, projectId, initialStatus }: CreateTa
         title: formData.title,
         description: formData.description,
         projectId,
-        status: initialStatus,  // Changed from statusId to status
+        status: initialStatus, 
         dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined,
         priority: formData.priority
       });
