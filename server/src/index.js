@@ -10,28 +10,44 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI;
 
-// Middleware
+// Middleware Configuration
+app.use(express.json());
 app.use(cors({
   origin: ['http://localhost:5173', 'https://task-manager-bpzf.onrender.com'],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
 
-// Database connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+// Database Connection
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('✅ Connected to MongoDB'))
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err.message);
+    process.exit(1); // Exit if connection fails
+  });
 
-// Routes
+// Routes Configuration
 app.use('/api/projects', authMiddleware, projectRoutes);
 app.use('/api/tasks', authMiddleware, taskRoutes);
 
-// Health check endpoint
+// Health Check Route
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({ status: 'ok', message: 'Server is healthy' });
 });
 
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error('🔥 Internal Server Error:', err.message);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
+
+// Start Server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-}); 
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+});
