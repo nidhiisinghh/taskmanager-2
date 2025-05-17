@@ -7,7 +7,7 @@ interface Project {
   description?: string;
   owner: string;
   members: string[];
-  status: 'active' | 'completed' | 'due-soon';
+  status: 'active' | 'completed' | 'due-soon' | "archived";
   createdAt: string;
   updatedAt: string;
 }
@@ -17,7 +17,7 @@ interface ProjectStore {
   currentProject: Project | null;
   isLoading: boolean;
   error: string | null;
-  fetchProjects: () => Promise<void>;
+  fetchProjects: () => Promise<Project[]>;
   fetchProject: (id: string) => Promise<void>;
   createProject: (data: { name: string; description?: string }) => Promise<void>;
   updateProject: (id: string, data: { name?: string; description?: string; status?: string }) => Promise<void>;

@@ -72,7 +72,7 @@ export const taskApi = {
     title: string;
     description?: string;
     projectId: string;
-    statusId: string;
+    statusId?: string;
     priority?: string;
     dueDate?: Date;
   }) =>
@@ -83,6 +83,15 @@ export const taskApi = {
 
   getProjectTasks: (projectId: string) =>
     apiRequest(`/tasks/project/${projectId}`),
+
+  getOne: (id: string) =>
+    apiRequest(`/tasks/${id}`),
+
+  addComment: (id: string, text: string) =>
+    apiRequest(`/tasks/${id}/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    }),
 
   update: (id: string, data: any) =>
     apiRequest(`/tasks/${id}`, {

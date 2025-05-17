@@ -25,11 +25,12 @@ const Dashboard = () => {
         setIsLoading(true);
         const fetchedProjects = await fetchProjects();
         
-        if (Array.isArray(fetchedProjects) && fetchedProjects.length > 0) {
+        // Only fetch tasks if we haven't fetched them before
+        if (Array.isArray(fetchedProjects) && fetchedProjects.length > 0 && tasks.length === 0) {
           const taskPromises = fetchedProjects.map(project => 
             fetchProjectTasks(project._id).catch(error => {
               console.error(`Error fetching tasks for project ${project._id}:`, error);
-              return null; // Continue with other projects if one fails
+              return null;
             })
           );
           await Promise.all(taskPromises);
@@ -44,7 +45,7 @@ const Dashboard = () => {
     if (user) {
       loadData();
     }
-  }, [fetchProjects, fetchProjectTasks, user]);
+  }, [fetchProjects, fetchProjectTasks, user, tasks.length]);
   
   // Calculate completed tasks count
   const completedTasksCount = tasks.filter(task => task.status === 'completed').length;
@@ -197,7 +198,7 @@ const Dashboard = () => {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-gray-800">Recent Tasks</h2>
             <Link 
-              to="/"
+              to="/tasks"
               className="text-blue-600 hover:text-blue-800"
             >
               View all
@@ -229,7 +230,10 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {tasks.map((task) => {  // Removed slice(0, 5) to show all tasks
+                {tasks
+                  .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+                  .slice(0, 5)
+                  .map((task) => {
                   const projectName = projects.find(p => p._id === task.project)?.name || '';
                   
                   return (
@@ -244,8 +248,8 @@ const Dashboard = () => {
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                           ${task.priority === 'high' ? 'bg-red-100 text-red-800' :
                             task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-green-100 text-green-800'}`
-                        }>
+                            'bg-green-100 text-green-800'}`}
+                        >
                           {task.priority}
                         </span>
                       </td>

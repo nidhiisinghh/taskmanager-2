@@ -11,6 +11,7 @@ import useTaskStore from '../../store/taskStore';
 
 interface KanbanTaskProps {
   task: Task;
+  onDelete: () => void;
 }
 
 const KanbanTask = ({ task }: KanbanTaskProps) => {
@@ -33,8 +34,9 @@ const KanbanTask = ({ task }: KanbanTaskProps) => {
   });
   
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: transform ? CSS.Transform.toString(transform) : undefined,
     transition,
+    willChange: 'transform',
     opacity: isDragging ? 0.5 : 1,
   };
   

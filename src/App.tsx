@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import ProjectDetail from './pages/ProjectDetail';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import NotFound from './pages/NotFound';
+import Tasks from './pages/Tasks';
 
 function App() {
   const { setUser, setLoading, isLoading } = useAuthStore();
@@ -67,6 +68,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route path="/tasks" element={<Tasks />} />
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>

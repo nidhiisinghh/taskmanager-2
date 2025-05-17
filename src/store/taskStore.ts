@@ -22,7 +22,7 @@ export interface Task {
   updatedAt: string;
 }
 
-interface TaskStore {
+export interface TaskStore {
   tasks: Task[];
   currentTask: Task | null;
   isLoading: boolean;
@@ -41,7 +41,7 @@ interface TaskStore {
     title?: string;
     description?: string;
     assignee?: string;
-    status?: 'todo' | 'in-progress' | 'review' | 'completed';
+    status?: 'todo' | 'in-progress' | 'review' | 'completed' | string | undefined;
     priority?: 'low' | 'medium' | 'high';
     dueDate?: Date;
   }) => Promise<void>;
